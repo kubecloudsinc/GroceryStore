@@ -9,6 +9,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class HomePage extends BasePage{
@@ -27,33 +29,42 @@ public class HomePage extends BasePage{
         System.setProperty(GECODRIVER_PROPERTY,GECODRIVER_LOCATION);
         theWebDriver = new FirefoxDriver();
         theWebDriver.manage().window().maximize();
+        theWebDriver.manage().deleteAllCookies();
         theWebDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 //        wait = new FluentWait<>(theWebDriver);
 //        wait.until(ExpectedConditions.presenceOfElementLocated(findXpathBy));
         theWebDriver.get(LOGIN_URL);
     }
 
-//    public void checkChatSymbol(){
-//        try {
-//
-//            LOG.debug("web element is :" + theWebElement.getAttribute("id"));
-//           theWebDriver.findElement(By.id(theWebElement.getAttribute("id")));
-//        }catch (StaleElementReferenceException exp) {
-//            theWebDriver.switchTo().defaultContent();
-//            checkChatSymbol();
-//        }
-//
-//    }
-//
-//    public void clickChatSymbol(){
-//
-//        theWebDriver.findElement(chatBoxBy).click();
-//
-//    }
-//
-//    public void seeChatBoxPopUp(){
-//        wait=new FluentWait<>(theWebDriver);
-//        wait.until(ExpectedConditions.presenceOfElementLocated(xpathBy));
-//        theWebElement= theWebDriver.findElement(greetingXathby);
-//    }
+    public void checkChatSymbol(){
+
+        List<WebElement> frames = theWebDriver.findElements(By.tagName("iframe"));
+        Iterator<WebElement> anIterator=frames.iterator();
+        while (anIterator.hasNext()){
+            theWebElement = neverStaleFrame(anIterator.next());
+            if (theWebElement.isDisplayed()){
+                //theWebElement.getAttribute("id");
+                theWebDriver.switchTo().frame(theWebElement);
+                if (theWebDriver.findElements(By.id("tawkchat-minified-wrapper")).size()==1){
+                    theWebDriver.findElement(By.id("tawkchat-minified-wrapper"));
+                    break;
+                }
+
+            }
+        }
+
+
+    }
+
+    public void clickChatSymbol(){
+
+        theWebDriver.findElement(chatBoxBy).click();
+
+    }
+
+    public void seeChatBoxPopUp(){
+        wait=new FluentWait<>(theWebDriver);
+        wait.until(ExpectedConditions.presenceOfElementLocated(xpathBy));
+        theWebElement= theWebDriver.findElement(greetingXathby);
+    }
 }
